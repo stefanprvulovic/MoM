@@ -18,17 +18,17 @@ namespace MoM.Controllers
             Context=context;
         }
 
-        [Route("addSlucaj/{kodnoIme}/{opis}/{nivoPov}")] // Dodaj slucaj
+        [Route("addSlucaj/{odsekID}")] // Dodaj slucaj
         [HttpPost]
-        public async Task<ActionResult> addSlucaj(string kodnoIme, string opis, string nivoPov)
+        public async Task<ActionResult> addSlucaj([FromBody] Slucaj s, int odsekID)
         {
-            if (nivoPov!="poverljivo" && nivoPov!="ograničen pristup"
-                && nivoPov!="javno")
+            if (s.nivoPov!="poverljivo" && s.nivoPov!="ograničen pristup"
+                && s.nivoPov!="javno")
                 {
                     return BadRequest("Nevalidan unos za nivo poverljivosti!");
                 }
             
-            if (opis.Length>150)
+            if (s.opis.Length>150)
             {
                 return BadRequest("Opis je predugačak!");
             }
@@ -36,10 +36,14 @@ namespace MoM.Controllers
             try
             {
                  var dodatSlucaj=new Slucaj();
-                 dodatSlucaj.kodnoIme=kodnoIme;
+                 dodatSlucaj.kodnoIme=s.kodnoIme;
                  dodatSlucaj.status=1; // defaultno se status postavlja na 1-u procesu resavanja
-                 dodatSlucaj.opis=opis;
-                 dodatSlucaj.nivoPov=nivoPov;
+                 dodatSlucaj.opis=s.opis;
+                 dodatSlucaj.nivoPov=s.nivoPov;
+                 var odsek=await Context.Odseci.FindAsync(odsekID);
+                 dodatSlucaj.Odsek=odsek;
+                 var prazanRadnik=new Radnik();
+                 dodatSlucaj.Radnik=prazanRadnik;
                  Context.Slucajevi.Add(dodatSlucaj);
                  await Context.SaveChangesAsync();
                  return Ok($"Slučaj je uspešno dodat! Njegov ID je: {dodatSlucaj.id}."); 
@@ -83,6 +87,15 @@ namespace MoM.Controllers
             }
         }
 
-        
+        [Route("dodeliSlucaj/{radnikID}/{kodnoIme}")] // dodeli slucaj radniku
+        [HttpPut]
+        public async Task<ActionResult> dodeliSlucaj(int radnikID, string kodnoIme)
+        {
+            var slucaj = Context.Slucajevi.Where(p => p.kodnoIme==kodnoIme).FirstOrDefault();
+            var radnik = Context.Radnici.Where(p => p.id==radnikID).FirstOrDefault();
+            slucaj.Radnik=radnik;
+            await Context.SaveChangesAsync();
+            return Ok($"Uspešno je dodeljen radnik slucaju {slucaj.kodnoIme}.");
+        }
     }
 }

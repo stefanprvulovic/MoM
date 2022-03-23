@@ -24,8 +24,6 @@ namespace Models
         [Column("Kratak opis")]
         public string opis { get; set; }
         
-        [JsonIgnore]
-        [Column("Rukovodilac:")]
         public virtual Radnik Radnik { get; set; }
 
         [JsonIgnore]

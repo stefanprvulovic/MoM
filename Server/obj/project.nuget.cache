@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Hs6VW1DBWnS+94VpFomTJ0R3GjPiPEMadOB/SdFp3K2QuWfXw6EgvadoFjfLPwrtvw3w5tFVtsInmz1c+YzCrg==",
+  "dgSpecHash": "L3zoQoMW3H/XMFxWJB7/YjTYYXQg3Aq+/Wn8S+0D/0QlsiHf8MT8Ui1IJktD8eVe9IuDadMic6wzlq0INbAhVw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\stefanprvulovic\\Desktop\\MoM\\Server\\MoM.csproj",
+  "projectFilePath": "C:\\Users\\stefanprvulovic\\Desktop\\fakultet\\WEB moj projekat\\MoM\\Server\\MoM.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\stefanprvulovic\\.nuget\\packages\\castle.core\\4.4.1\\castle.core.4.4.1.nupkg.sha512",
     "C:\\Users\\stefanprvulovic\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",

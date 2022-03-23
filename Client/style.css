@@ -1,14 +1,146 @@
-.Pretraga
+body
 {
-    background-color: red;
+    flex-direction: row;
+    background-image: url('back.jpg');
+  
+    background-repeat:no-repeat;
+    background-size:cover
+}
+
+@font-face {
+    font-family: 'naslov'; 
+    src: url("HarryPotter7.ttf"); 
+    font-style: normal;
+    font-weight: 100;
+}
+
+@font-face {
+    font-family: 'labele'; 
+    src: url("jenna.ttf"); 
+    font-style: normal;
+    font-weight: 100;
+}
+
+h1
+{
+    text-align: center;
+    color:white;
+    font-family: naslov;
+    font-weight: 100;
+    text-shadow: 3px 3px 2px black;
+    font-size: 50px;
+    margin: 0%;
+}
+
+h2
+{
+    text-align: center;
+    font-family: 'Calibri';
+    font-weight: 100;
+    font-weight: bold;
+    margin: 1%;
 
 }
 
-.Slucajevi
+.dugmeTrazi:hover, .dugmeDodaj:hover, .dugmeIzmeni:hover, .dugmeDodeli:hover, .dugmeBrisi:hover
 {
-    background-color: blue;}
-
-.Radnici
-{
-    background-color: green;
+        background-color: burlywood; 
+        color: white;
 }
+.divTrazi, .divDodaj, .divIzmeni
+{
+    display: flex;
+    flex-direction:inherit;
+    flex-basis: 25%;
+    padding: 1%;
+    margin-top: 5px;
+    text-align: center;
+}
+.dugmeTrazi, .dugmeDodaj, .dugmeIzmeni, .dugmeDodeli, .dugmeBrisi
+{
+    transition-duration: 0.4s;
+    font-family: 'Calibri';
+    font-size:larger; 
+}
+
+.srcStatus, .povDugme, .slcOdsek, .slcStatus
+{
+    font-family: 'Calibri';
+    font-size:medium; 
+    display:flex;
+    flex-direction: column;
+    padding:1%
+}
+
+label
+{
+    margin: 2px;
+}
+
+.containerPretraga, .containerSlucaj, .containerRadnik
+{
+    display: flex;
+    flex-direction: column;
+    flex-basis: 25%;
+    padding: 1%;
+    font-family: 'Calibri';
+    font-size:large;
+    border-radius: 25px;
+    background: white;
+    opacity:90%;
+    white-space: normal;
+}
+
+.containerSadrzaj {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content:space-evenly;
+}
+
+.containerTable
+{
+    border-color: black;
+    font-family: 'Calibri';
+    font-size: larger;
+    background: white;
+    margin-top: 10px;
+    margin:auto;
+    width: 50%;
+    padding: 10px;
+}
+
+.Dodavanje, .Status, .Dodela, .brisanjeDiv
+{
+    display: flex;
+    flex-direction: column;
+}
+
+textarea {
+    resize: none;
+    display:flex;
+    flex-wrap: wrap;
+  }
+
+td
+{
+    border: 2px solid;
+}
+
+table
+{
+    border-collapse: collapse;
+    align-self: center;
+}
+
+th{
+    border: 2px solid;
+}
+
+
+
+
+
+
+
+

@@ -18,47 +18,58 @@ namespace MoM.Controllers
             Context=context;
         }
 
-        [Route("getRadnik")]
+        [Route("getRadnikByName/{ime}/{prezime}")]
         [HttpGet]
-        public ActionResult get()
+        public ActionResult getRadnikByName(string ime, string prezime)
         {
-            return Ok(Context.Radnici);
+            var radnik = Context.Radnici
+                            .Where(p => p.ime==ime)
+                            .Where(p => p.prezime==prezime);
+            return Ok(radnik);
         }
 
-        [Route("addRadnik")] // Dodaj radnika
+        [Route("addRadnik/{ime}/{prezime}/{pol}/{brLegitimacije}/{godRodj}")] // Dodaj radnika
         [HttpPost]
-        public async Task<ActionResult> addRadnik([FromBody] Radnik radnik)
+        public async Task<ActionResult> addRadnik(string ime, string prezime, string pol,
+        int brLegitimacije, int godRodj)
         {
-            if (string.IsNullOrWhiteSpace(radnik.ime) && radnik.ime.Length>25)
+            if (string.IsNullOrWhiteSpace(ime) && ime.Length>25)
             {
                 return BadRequest("Podatak je pogrešno unet ili je predugačak.");
             }
 
-             if (string.IsNullOrWhiteSpace(radnik.prezime) && radnik.ime.Length>50)
+             if (string.IsNullOrWhiteSpace(prezime) && prezime.Length>50)
             {
                 return BadRequest("Podatak je pogrešno unet ili je predugačak.");
             }
 
-            if (radnik.brLegitimacije<100000)
+            if (brLegitimacije<100000)
             {
                 return BadRequest("Pogrešan format legitimacije!");
             }
 
-            if (radnik.pol!="M" && radnik.pol!="Ž")
+            if (pol!="M" && pol!="Ž")
             {
                 return BadRequest("Pogrešno unet karakter za pol!");
             }
 
-            if (radnik.godRodj<1950)
+            if (godRodj<1950)
             {
                 return BadRequest("Pogrešno uneta godina!");
             }
 
             try
             {
-                Context.Radnici.Add(radnik);
+                Radnik dodatRadnik = new Radnik();
+                dodatRadnik.ime = ime;
+                dodatRadnik.prezime = prezime;
+                dodatRadnik.pol = pol;
+                dodatRadnik.brLegitimacije = brLegitimacije;
+                dodatRadnik.godRodj = godRodj;
+
+                Context.Radnici.Add(dodatRadnik);
                 await Context.SaveChangesAsync();
-                return Ok($"Radnik je uspešno dodat! Njegov ID je: {radnik.id}.");
+                return Ok($"Radnik je uspešno dodat! Njegov ID je: {dodatRadnik.id}.");
             }
 
             catch (Exception e)
@@ -88,7 +99,17 @@ namespace MoM.Controllers
             }
         }
 
-    }
+        [Route("dodeliSlucaj/{radnikID}/{kodnoIme}")] // dodeli slucaj radniku
+        [HttpPut]
+        public async Task<ActionResult> dodeliSlucaj(int radnikID, string kodnoIme)
+        {
+            var slucaj = Context.Slucajevi.Where(p => p.kodnoIme==kodnoIme).FirstOrDefault();
+            var radnik = Context.Radnici.Where(p => p.id==radnikID).FirstOrDefault();
+            slucaj.Radnik=radnik;
+            await Context.SaveChangesAsync();
+            return Ok($"Uspešno je dodeljen radnik slucaju {slucaj.kodnoIme}.");
+        }
 
-    //kad metoda ima argumente, menja studente eksplcitno po argumentima {argument}, {argument}
+
+    }
 }

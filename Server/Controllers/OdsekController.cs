@@ -33,13 +33,14 @@ namespace MoM.Controllers
             }
         }
 
-        [Route("getSlucaj/{imeOdseka}/{status}")]
+        [Route("{id}/getSlucaj/{status}")]
         [HttpGet]
-         public async Task<ActionResult> getSlucaj(string imeOdseka, int status)
+         public async Task<ActionResult> getSlucaj(int id, int status)
          {
             var slucajevi = await Context.Slucajevi
             .Include(p => p.Odsek)
-            .Where(p => p.Odsek.ime==imeOdseka)
+            .Include(p => p.Radnik)
+            .Where(p => p.Odsek.id==id)
             .Where(p => p.status==status)
             .ToListAsync();
             return Ok(slucajevi);
