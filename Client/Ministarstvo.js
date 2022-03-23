@@ -441,34 +441,24 @@ export class Ministarstvo {
             let ime = document.querySelector(".inpIme").value;
             let prezime = document.querySelector(".inpPrezime").value;
             let r = new Radnik();
-            if (ime && prezime) {
+            if (ime && prezime) 
+            {
                 fetch(`https://localhost:5001/Radnik/getRadnikByName/${ime}/${prezime}`)
                     .then(async val => {
                         const radnik = await val.json();
-                        if (radnik) 
-                        {
                             radnik.forEach(x => {
                                 r.id = x.id
                                 r.ime = ime;
                                 r.prezime = prezime;
                             })
-
-                            fetch(`https://localhost:5001/Radnik/deleteRadnik/${r.id}`,
-                            {
-                                method: 'DELETE'
-                            })
-                            .then (s => {
-                                if (s.ok) {s.json()}
-                            })
-                        }
-                        else
-                        {
-                            alert("Ne postoji radnik sa takvim imenom!")
-                        }});
+                            let ID=r.id;
+                            fetch (`https://localhost:5001/Radnik/deleteRadnik/${ID}`,
+                            {method: "DELETE"})
+                            .then(response => response.json())
+                            });
+            }
 
 
         }
-
-
+    }
 }
-}}
