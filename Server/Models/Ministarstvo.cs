@@ -5,8 +5,8 @@ using System.Text.Json.Serialization;
 
 namespace Models
 {
-    [Table("Odsek")]
-    public class Odsek
+    [Table("Ministarstvo")]
+    public class Ministarstvo
     {
         [Key]
         public int id { get; set; }
@@ -15,16 +15,9 @@ namespace Models
         [Column("Ime")]
         public string ime { get; set; }
 
-        [Column("Br. sprata")]
+        [Column("Broj spratova")]
         public int sprat { get; set; }
 
-     
-        public virtual List<Slucaj> Slucajevi { get; set; }
-        
-      
-        public virtual List<Radnik> Radnici { get; set; }
-
-        [JsonIgnore]
-        public virtual Ministarstvo Ministarstvo { get; set; }
+        public virtual List<Odsek> Odseci { get; set; }
     }
 }

@@ -82,17 +82,12 @@ namespace MoM.Controllers
         [HttpDelete]
         public async Task<ActionResult> deleteRadnik(int id)
         {
-            if (id<=0)
-            {
-                return BadRequest("Pogrešno unet ID!");
-            }
-            
-            try
+             try
             {
                 var radnik = await Context.Radnici.FindAsync(id);
                 Context.Radnici.Remove(radnik);
-                await Context.SaveChangesAsync(); // cuvanje u bazi
-                 return Ok("Radnik je uspešno otpušten!");
+                await Context.SaveChangesAsync();
+                return Ok("Radnik je uspešno otpušten!");
             }
             catch (Exception e)
             {

@@ -1,21 +1,24 @@
 import { Ministarstvo } from "./Ministarstvo.js";
 import { Odsek } from "./Odsek.js";
 
-var listaOdseka=[];
+const listaMinistarstva = [];
 
-fetch("https://localhost:5001/Odsek/getOdsek")  // u okviru jsona, imamo odseke
-.then(p => 
-    {
-        p.json().then(odseci => 
-            {
-                odseci.forEach(odsek => { // odseci su vise odseka, a jedan odsek je
-                    var p = new Odsek(odsek.id, odsek.ime)
-                    listaOdseka.push(p);
-                });
-                var m = new Ministarstvo(listaOdseka);
-                m.draw(document.body);
-            })
+fetch('https://localhost:5001/Ministarstvo/getAll')
+    .then(async response => {
+        const data = await response.json();
+        // console.log(data);
+        data.forEach(ministarstvo => {
+            const m = new Ministarstvo(ministarstvo.ime, ministarstvo.sprat, []);
+``
+            ministarstvo.odseci.forEach(odsek => {
+                m.listaOdseka.push(new Odsek(odsek.id, odsek.ime));
+            });
+
+            m.draw(document.body);
+
+            listaMinistarstva.push(m);
+        });
+
+        // console.log(listaMinistarstva);
     })
-
-console.log(listaOdseka);
-
+    .catch(error => console.log(error));

@@ -2,7 +2,9 @@ import { Radnik } from "./Radnik.js";
 import { Slucaj } from "./Slucaj.js";
 
 export class Ministarstvo {
-    constructor(listaOdseka) {
+    constructor(ime, brojSpratova, listaOdseka) {
+        this.ime = ime;
+        this.brojSpratova = brojSpratova;
         this.listaOdseka = listaOdseka;
         this.container = null;
     }
@@ -14,8 +16,13 @@ export class Ministarstvo {
 
         let naslov = document.createElement("h1");
         naslov.className = "naslov";
-        naslov.innerHTML = "Ministarstvo Magije";
+        naslov.innerHTML = this.ime;
         this.container.appendChild(naslov);
+
+        let brojSpratova = document.createElement("h3");
+        brojSpratova.className = "naslov";
+        brojSpratova.innerHTML = `Broj spratova: ${this.brojSpratova}`;
+        this.container.appendChild(brojSpratova);
 
         let containerSadrzaj = document.createElement("div");
         containerSadrzaj.className = "containerSadrzaj";
@@ -32,6 +39,10 @@ export class Ministarstvo {
         let containerRadnik = document.createElement("div");
         containerRadnik.className = "containerRadnik";
         containerSadrzaj.appendChild(containerRadnik);
+
+        let containerTable = document.createElement("table");
+        containerTable.className = "containerTable";
+        this.container.appendChild(containerTable);
 
         this.drawPretraga(containerPretraga);
         this.drawSlucajevi(containerSlucaj);
@@ -117,52 +128,47 @@ export class Ministarstvo {
         bttnSrc.innerHTML = 'Traži';
         divSrc.appendChild(bttnSrc);
 
-        let divTable = document.createElement("div");
-        divTable.className = "divTable"
-        this.container.appendChild(divTable);
-        let containerTable = document.createElement("table");
-        containerTable.className = "containerTable";
-        divTable.appendChild(containerTable);
+        // let divTable = document.createElement("div");
+        // divTable.className = "divTable"
+        // this.container.appendChild(divTable);
+        
+        
 
         // Trazi slucajeve po odseku
         bttnSrc.onclick = () => {
-            containerTable = this.deletePrev();
+            this.containerTable = this.deletePrev();
             const odsek = this.container.querySelector("input[name='Pretraga Odseka']:checked");
             if (odsek) {
                 fetch(`https://localhost:5001/Odsek/${odsek.value}/getSlucaj/${se.selectedOptions[0].value}`)
                     .then(async val => {
                         const slucajevi = await val.json();
                         if (slucajevi.length) {
-                            this.drawHeader(containerTable);
+                            this.drawHeader(this.containerTable);
                             slucajevi.forEach(x => {
                                 let s = new Slucaj();
                                 // console.log(s);
                                 s.kodnoIme = x.kodnoIme;
                                 if (x.status == 0) {
                                     s.status = "rešen";
-                                }
-                                else if (x.status == 1) {
+                                } else if (x.status == 1) {
                                     s.status = "u procesu rešavanja";
                                 }
                                 s.nivoPov = x.nivoPov;
                                 s.opis = x.opis;
-                                if (x.radnik.ime != null && x.radnik.prezime != null) {
+                                if (x.radnik && x.radnik.ime != null && x.radnik.prezime != null) {
                                     let ime = x.radnik.ime;
                                     let prezime = x.radnik.prezime;
                                     s.imeRadnika = ime + ' ' + prezime;
                                 }
-                                s.drawRow(containerTable);
+                                s.drawRow(this.containerTable);
 
-                            }
-                            );
-                        }
-                        else {
+                            });
+                        } else {
                             alert(`Nema takvih slučajeva!`);
                         }
                     })
                     .catch(er => console.log(er));
-            }
-            else {
+            } else {
                 alert('Niste odabrali odsek!')
             }
         };
@@ -242,19 +248,16 @@ export class Ministarstvo {
             let nivoPov;
             if (nivoPovSelected == 0) {
                 nivoPov = "poverljivo";
-            }
-            else if (nivoPovSelected == 1) {
+            } else if (nivoPovSelected == 1) {
                 nivoPov = "ograničen pristup";
-            }
-            else if (nivoPovSelected == 2) {
+            } else if (nivoPovSelected == 2) {
                 nivoPov = "javno";
             }
             let opis = addSlucaj.querySelector(".Opis").value;
             let odsekID = addSlucaj.querySelector(".slcOdsek").selectedOptions[0].value;
             if (ime && opis) {
                 let s = new Slucaj(ime, nivoPov, opis, odsekID);
-                fetch(`https://localhost:5001/Slucaj/addSlucaj/${s.odsekID}`,
-                    {
+                fetch(`https://localhost:5001/Slucaj/addSlucaj/${s.odsekID}`, {
                         method: "POST",
                         headers: {
                             'Content-Type': 'application/json',
@@ -264,8 +267,7 @@ export class Ministarstvo {
                     })
                     .then(response => response.json());
                 alert(`Uspešno je dodat slučaj!`);
-            }
-            else {
+            } else {
                 alert(`Niste popunili podatke!`);
             }
         }
@@ -312,8 +314,7 @@ export class Ministarstvo {
         buttonIzmeni.onclick = () => {
             let kodnoIme = setStatus.querySelector(".imeInput").value;
             let status = setStatus.querySelector(".slcStatus").selectedOptions[0].value;
-            fetch(`https://localhost:5001/Slucaj/editStatus/${kodnoIme}`,
-                {
+            fetch(`https://localhost:5001/Slucaj/editStatus/${kodnoIme}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -366,16 +367,15 @@ export class Ministarstvo {
         containerDodela.appendChild(btnDodeli);
 
         btnDodeli.onclick = () => {
-            let ime = document.querySelector(".imeInput1").value;
-            let prezime = document.querySelector(".prezimeInput").value;
-            let imeSlucaja = document.querySelector(".imeSlucaja").value;
+            let ime = host.querySelector(".imeInput1").value;
+            let prezime = host.querySelector(".prezimeInput").value;
+            let imeSlucaja = host.querySelector(".imeSlucaja").value;
             let r = new Radnik();
             if (ime && prezime && imeSlucaja) {
                 fetch(`https://localhost:5001/Radnik/getRadnikByName/${ime}/${prezime}`)
                     .then(async val => {
                         const radnik = await val.json();
-                        if (radnik) 
-                        {
+                        if (radnik) {
                             radnik.forEach(x => {
                                 r.id = x.id
                                 r.ime = ime;
@@ -383,8 +383,7 @@ export class Ministarstvo {
                                 console.log(r);
                             })
 
-                            fetch(`https://localhost:5001/Slucaj/dodeliSlucaj/${r.id}/${imeSlucaja}`,
-                                {
+                            fetch(`https://localhost:5001/Slucaj/dodeliSlucaj/${r.id}/${imeSlucaja}`, {
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json',
@@ -394,14 +393,11 @@ export class Ministarstvo {
                                 })
                                 .then(response => response.json());
                             alert(`Uspešno je dodeljen radnik slučaju!`);
-                        }
-                        else
-                        {
+                        } else {
                             alert("Ne postoji radnik sa takvim imenom!")
                         }
                     });
-            }
-            else {
+            } else {
                 alert("Podaci nisu u potpunosti uneti!")
             }
 
@@ -412,50 +408,50 @@ export class Ministarstvo {
         n.innerHTML = "Otpusti radnika";
         host.appendChild(n);
 
-        let brisanjeDiv=document.createElement("div");
-        brisanjeDiv.className="brisanjeDiv";
+        let brisanjeDiv = document.createElement("div");
+        brisanjeDiv.className = "brisanjeDiv";
         host.appendChild(brisanjeDiv);
 
-        let lbIme=document.createElement("label");
-        lbIme.innerHTML="Ime:";
+        let lbIme = document.createElement("label");
+        lbIme.innerHTML = "Ime:";
         brisanjeDiv.appendChild(lbIme);
 
-        let inpIme=document.createElement("input");
-        inpIme.className="inpIme";
+        let inpIme = document.createElement("input");
+        inpIme.className = "inpIme";
         brisanjeDiv.appendChild(inpIme);
 
-        let lbPrezime=document.createElement("label");
-        lbPrezime.innerHTML="Prezime:";
+        let lbPrezime = document.createElement("label");
+        lbPrezime.innerHTML = "Prezime:";
         brisanjeDiv.appendChild(lbPrezime);
 
-        let inpPrezime=document.createElement("input");
-        inpPrezime.className="inpPrezime";
+        let inpPrezime = document.createElement("input");
+        inpPrezime.className = "inpPrezime";
         brisanjeDiv.appendChild(inpPrezime);
 
-        let btnBrisi=document.createElement("button");
-        btnBrisi.innerHTML="Obriši";
-        btnBrisi.className="dugmeBrisi";
+        let btnBrisi = document.createElement("button");
+        btnBrisi.innerHTML = "Obriši";
+        btnBrisi.className = "dugmeBrisi";
         brisanjeDiv.appendChild(btnBrisi);
 
         btnBrisi.onclick = () => {
-            let ime = document.querySelector(".inpIme").value;
-            let prezime = document.querySelector(".inpPrezime").value;
+            let ime = host.querySelector(".inpIme").value;
+            let prezime = host.querySelector(".inpPrezime").value;
             let r = new Radnik();
-            if (ime && prezime) 
-            {
+            if (ime && prezime) {
                 fetch(`https://localhost:5001/Radnik/getRadnikByName/${ime}/${prezime}`)
                     .then(async val => {
                         const radnik = await val.json();
-                            radnik.forEach(x => {
-                                r.id = x.id
-                                r.ime = ime;
-                                r.prezime = prezime;
-                            })
-                            let ID=r.id;
-                            fetch (`https://localhost:5001/Radnik/deleteRadnik/${ID}`,
-                            {method: "DELETE"})
-                            .then(response => response.json())
-                            });
+                        radnik.forEach(x => {
+                            r.id = x.id
+                            r.ime = ime;
+                            r.prezime = prezime;
+                        })
+                        let ID = r.id;
+                        console.log(ID);
+                        fetch(`https://localhost:5001/Radnik/deleteRadnik/${ID}`, { method: "DELETE" })
+                            .then(response => console.log(response))
+                            .catch(err=>console.log(err));
+                    });
             }
 
 
